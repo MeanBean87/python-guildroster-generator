@@ -1,12 +1,13 @@
 import os
 import pandas as pd
+import subprocess
 
 dirname = os.path.dirname(__file__)
 
 
 def generate_guild_roster_report(dictionary, guild_name):
     df1 = pd.DataFrame(dictionary).T.reset_index().rename(columns={'index': 'Name'})
-    df1.columns = ['Player Name', 'Level', 'Average Item Level', 'Class', 'Runes', 'Role', 'Talent Points']
+    df1.columns = ['Player Name', 'Level', 'Average Item Level', 'Class', 'Runes', 'Role', 'Talent Points', 'Best AVG Parse (BFD)']
 
     df1 = df1.style.map(color_class, subset=['Class'])
     df1 = df1.map(color_role, subset=['Role'])
@@ -14,12 +15,13 @@ def generate_guild_roster_report(dictionary, guild_name):
     pd.set_option('display.max_colwidth', None)
 
     path = os.path.join(dirname, r'reports', f'{guild_name}_roster.xlsx')
-    print(path)
+    print(f'Generated a report at {path}')
 
     # Writing to Excel
     with pd.ExcelWriter(path, engine='xlsxwriter') as writer:
         df1.to_excel(writer, sheet_name='roster', index=False)
 
+    subprocess.run(['start', path], shell=True)
 
 def convert_talent_points(x):
     try:

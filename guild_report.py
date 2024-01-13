@@ -1,8 +1,10 @@
 import asyncio
 from guild_endpoints import get_guild_info
-from character_endpoints import get_character_info
+from character_endpoints import get_character_info, get_parse_data
 from pandas_functions import generate_guild_roster_report
 from role import RUNE_ROLE_MAP, WOW_CLASSES
+
+testing = False
 
 
 # Gets specified guilds player roster
@@ -98,15 +100,28 @@ async def get_character_talents(region, realm, roster, namespace_id):
     return roster
 
 
+async def get_character_parse(roster, realm, region):
+    iteration = 1
+    print("Adding Blackfathom Deeps DPS Parses")
+    for member in roster:
+        best_performance_average = get_parse_data(member.lower(), realm, region)
+        roster[member]["bfd_parse"] = round(best_performance_average['zoneRankings']['bestPerformanceAverage'], 1)
+        print(f'{iteration} of {len(roster)} members updated')
+        iteration += 1
+    return roster
+
+
 # Wrapper function for generating the report
 async def generate_guild_report(region, realm, guild_name, namespace_id, min_level):
     roster = await get_guild_roster(region, realm, guild_name, namespace_id, min_level)
-    # Test Roster
-    roster = {'Nazzy': {'level': 25}, 'Nxe': {'level': 25}}
+    if testing:
+        roster = {'Voov': {'level': 25},
+                  'Krix': {'level': 25}}
     roster = await get_character_specializations(region, realm, roster, namespace_id)
     roster = await get_character_runes(region, realm, roster, namespace_id)
     roster = await get_character_roles(roster)
     roster = await get_character_talents(region, realm, roster, namespace_id)
+    roster = await get_character_parse(roster, realm, region)
     generate_guild_roster_report(roster, guild_name)
 
 
