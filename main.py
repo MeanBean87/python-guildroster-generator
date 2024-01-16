@@ -2,7 +2,12 @@ from guild_report import guild_roster_generator
 
 
 guild_names = [
-    "CLAM LORDS",
+    "NOPE",
+    "League of Shadows",
+    "Flush",
+    "Bad Iron",
+    "nakama"
+
 ]
 
 

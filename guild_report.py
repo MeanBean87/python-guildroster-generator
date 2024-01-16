@@ -4,7 +4,7 @@ from character_endpoints import get_character_info, get_parse_data
 from pandas_functions import generate_guild_roster_report
 from role import RUNE_ROLE_MAP, WOW_CLASSES
 
-testing = False
+testing = True
 
 
 # Gets specified guilds player roster
@@ -104,9 +104,12 @@ async def get_character_parse(roster, realm, region):
     iteration = 1
     print("Adding Blackfathom Deeps DPS Parses")
     for member in roster:
-        best_performance_average = get_parse_data(member.lower(), realm, region)
-        roster[member]["bfd_parse"] = round(best_performance_average['zoneRankings']['bestPerformanceAverage'], 1)
-        print(f'{iteration} of {len(roster)} members updated')
+        try:
+            best_performance_average = get_parse_data(member.lower(), realm, region)
+            roster[member]["bfd_parse"] = round(best_performance_average['zoneRankings']['bestPerformanceAverage'], 1)
+            print(f'{iteration} of {len(roster)} members updated')
+        except TypeError:
+            roster[member]["bfd_parse"] = 0
         iteration += 1
     return roster
 
