@@ -19,6 +19,8 @@ ep_type = {
     8: "/specializations",
 }
 
+zone_ids = [2007, 2008]
+
 query = '''
 query($name: String, $serverSlug: String, $serverRegion: String, $role: RoleType!, $zoneID: Int) {
     characterData {
@@ -39,7 +41,7 @@ def get_character_info(region, realm, name, namespace_id, endpoint, locale='en_U
     return response.json()
 
 
-def get_parse_data(name, realm, region):
+def get_parse_data(name, realm, region, zone):
     token = create_logs_access_token()
     url = 'https://vanilla.warcraftlogs.com/api/v2/client'
 
@@ -48,7 +50,7 @@ def get_parse_data(name, realm, region):
         'serverSlug': realm,
         'serverRegion': region,
         'role': 'DPS',
-        'zoneID': 2007
+        'zoneID': zone
     }
 
     headers = {
@@ -72,7 +74,5 @@ def get_parse_data(name, realm, region):
 
     if character_data is None:
         print("No character data found.")
-    else:
-        print(character_data)
 
     return character_data
