@@ -2,18 +2,16 @@ from guild_report import guild_roster_generator
 
 
 guild_names = [
-    "NOPE",
-    "League of Shadows",
-    "Flush",
-    "Bad Iron",
-    "nakama"
-
+    "CLAM LORDS",
+    "Manabound",
+    "Parts for Kravel",
+    "Unfathomable"
 ]
 
 
 def init():
     for guild in guild_names:
-        guild_roster_generator('us', 'chaos-bolt', guild.lower().replace(" ", "-"), 0, 25)
+        guild_roster_generator('us', 'chaos-bolt', guild.lower().replace(" ", "-"), 0, 40)
 
 
 init()

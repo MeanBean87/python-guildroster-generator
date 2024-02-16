@@ -7,11 +7,16 @@ dirname = os.path.dirname(__file__)
 
 def generate_guild_roster_report(dictionary, guild_name):
     df1 = pd.DataFrame(dictionary).T.reset_index().rename(columns={'index': 'Name'})
-    df1.columns = ['Player Name', 'Level', 'Average Item Level', 'Class', 'Runes', 'Role', 'Talent Points', 'Best AVG Parse (BFD)']
 
+    # Define the column order explicitly
+    df1 = df1[['Name', 'level', 'average_item_level', 'class', 'runes', 'role', 'talent_points', 'Blackfathom Deeps',
+               'Gnomeregan']]
+    df1.columns = ['Player Name', 'Level', 'Average Item Level', 'Class', 'Runes', 'Role', 'Talent Points',
+                   'Best AVG Parse (BFD)', 'Best AVG Parse (Gnomeregan)']
+
+    # Styling and display options
     df1 = df1.style.map(color_class, subset=['Class'])
     df1 = df1.map(color_role, subset=['Role'])
-
     pd.set_option('display.max_colwidth', None)
 
     path = os.path.join(dirname, r'reports', f'{guild_name}_roster.xlsx')
@@ -22,6 +27,7 @@ def generate_guild_roster_report(dictionary, guild_name):
         df1.to_excel(writer, sheet_name='roster', index=False)
 
     subprocess.run(['start', path], shell=True)
+
 
 def convert_talent_points(x):
     try:

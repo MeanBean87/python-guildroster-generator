@@ -4,7 +4,7 @@ from character_endpoints import get_character_info, get_parse_data
 from pandas_functions import generate_guild_roster_report
 from role import RUNE_ROLE_MAP, WOW_CLASSES
 
-testing = True
+testing = False
 
 
 # Gets specified guilds player roster
@@ -102,12 +102,14 @@ async def get_character_talents(region, realm, roster, namespace_id):
 
 async def get_character_parse(roster, realm, region):
     iteration = 1
-    print("Adding Blackfathom Deeps DPS Parses")
+    zone_ids = {"Blackfathom Deeps": 2007, "Gnomeregan": 2008}
     for member in roster:
         try:
-            best_performance_average = get_parse_data(member.lower(), realm, region)
-            roster[member]["bfd_parse"] = round(best_performance_average['zoneRankings']['bestPerformanceAverage'], 1)
-            print(f'{iteration} of {len(roster)} members updated')
+            for zone in zone_ids:
+                print(f"Adding {zone} parse for {member} ")
+                best_performance_average = get_parse_data(member.lower(), realm, region, zone_ids[zone])
+                roster[member][zone] = round(best_performance_average['zoneRankings']['bestPerformanceAverage'], 1)
+                print(f'{iteration} of {len(roster)} members updated')
         except TypeError:
             roster[member]["bfd_parse"] = 0
         iteration += 1
@@ -118,8 +120,7 @@ async def get_character_parse(roster, realm, region):
 async def generate_guild_report(region, realm, guild_name, namespace_id, min_level):
     roster = await get_guild_roster(region, realm, guild_name, namespace_id, min_level)
     if testing:
-        roster = {'Voov': {'level': 25},
-                  'Krix': {'level': 25}}
+        roster = {'Voov': {'level': 40}}
     roster = await get_character_specializations(region, realm, roster, namespace_id)
     roster = await get_character_runes(region, realm, roster, namespace_id)
     roster = await get_character_roles(roster)
